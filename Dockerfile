@@ -42,8 +42,8 @@ RUN apt-get update -y && \
     echo ${TZ} > /etc/timezone && \
     rm -rf /var/lib/apt/lists/*
 
-# UV Python installer
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/bin/
+# UV Python installer - pin to a specific stable version
+COPY --from=ghcr.io/astral-sh/uv:0.5.14 /uv /uvx /usr/bin/
 
 # Create user and directories
 RUN groupadd -g ${XNAT_GID} ${XNAT_GROUP} && \
@@ -63,16 +63,13 @@ ENV PATH="${VENV}/bin:$PATH"
 RUN uv venv --python ${PYTHON_VERSION} ${VENV}
 
 # Install PyTorch 2.1.2 compatible with CUDA 11.8 (works with CUDA 11.4 runtime)
-# Using --index-strategy to allow finding packages across multiple indexes
+# Using --find-links to get wheels from PyTorch index
 RUN uv pip install --python ${VENV}/bin/python --no-cache-dir \
-        --index-strategy unsafe-best-match \
-        torch==2.1.2 \
-        torchvision==0.16.2 \
-        torchaudio==2.1.2 \
-        --extra-index-url https://download.pytorch.org/whl/cu118
+        torch==2.1.2+cu118 \
+        torchvision==0.16.2+cu118 \
+        torchaudio==2.1.2+cu118 \
+        --find-links https://download.pytorch.org/whl/torch_stable.html
 
 # Copy requirements and install remaining packages
 COPY requirements.txt ./
-RUN uv pip install --python ${VENV}/bin/python --no-cache-dir \
-        --index-strategy unsafe-best-match \
-        -r requirements.txt
+RUN uv pip install --python ${VENV}/bin/python --no-cache-dir -r requirements.txt
