@@ -1,0 +1,29 @@
+# Core dependencies
+numpy<2
+scipy
+scikit-learn
+pandas
+matplotlib
+seaborn
+tqdm
+requests
+einops
+yacs
+
+# DICOM and medical imaging
+pydicom
+nibabel
+SimpleITK
+imagecodecs
+dcmrtstruct2nii
+dicom2nifti
+python-gdcm==3.0.22
+blosc2==2.4.0
+graphviz
+
+# nnUNet v2
+nnunetv2==2.5.2
+acvl-utils==0.2
+batchgenerators
+batchgeneratorsv2
+dynamic-network-architectures
